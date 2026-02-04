@@ -1,0 +1,44 @@
+int sensorPin = A0;
+int sensorValue = 0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  sensorValue = analogRead(sensorPin);
+  Serial.println(sensorValue);
+  delay(1000);
+}
+import serial
+import time
+
+# Change COM port according to your system
+# Windows: 'COM3', 'COM4'
+# Linux/Mac: '/dev/ttyUSB0'
+ser = serial.Serial('COM3', 9600)
+time.sleep(2)
+
+THRESHOLD = 300  # Adjust based on calibration
+
+print("Liquor Detection System Started...\n")
+
+while True:
+    try:
+        data = ser.readline().decode('utf-8').strip()
+        
+        if data.isdigit():
+            alcohol_level = int(data)
+            print(f"Alcohol Sensor Value: {alcohol_level}")
+
+            if alcohol_level > THRESHOLD:
+                print("⚠️ Alcohol Detected! Liquor Presence High\n")
+            else:
+                print("✅ No Alcohol Detected\n")
+
+        time.sleep(1)
+
+    except KeyboardInterrupt:
+        print("System Stopped.")
+        ser.close()
+        break
